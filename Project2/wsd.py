@@ -3,9 +3,30 @@ import math
 import operator
 import utils
 
+"""
+featureProbabilityDictionary
+{
+    lexelt-item:
+    {
+        sense_id:
+        {
+            feature: probability
+        }
+    }
+}
 
-def word_sense_disambiguation(dic, context, instance):
-    sense_ids = dic[instance]
+priorProbabilityDictionary
+{
+    lexelt-item:
+    {
+        sense_id: probability
+    }
+}
+"""
+
+
+def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDictionary, context, instanceString):
+    sense_ids = featureProbabilityDictionary[instanceString]
     sense_id_scores = {}
     surround_words = context.text.strip().split()[-10:]
     headNumber = 0
@@ -15,25 +36,30 @@ def word_sense_disambiguation(dic, context, instance):
             :numberToGrab]
         headNumber += 1
 
-    # Turn array to dictionary with count
-    surround_words_dic = {}
-    for word in surround_words:
-        if word not in surround_words_dic:
-            surround_words_dic[word] = 0
-        surround_words_dic += 1
+    for sense_id, featureProbility in sense_ids.iteritems():
+        sense_id_scores[sense_id] = priorProbabilityDictionary[
+            instanceString][sense_id]
 
-    for sense_id, features in sense_ids.iteritems():
-        sense_id_scores[sense_id] = 0
-        for feature in features:
-            if feature in surround_words_dic:
-                # score is sum of exp(probability)
-                sense_id_scores[sense_id] += math.exp(feature[1]) * surround_words_dic[feature[0]]
+        for word in surround_words:
+            if word in featureProbility:
+                sense_id_scores[sense_id] *= featureProbility[word]
 
     # return the sense_id with max score
     return max(sense_id_scores.iteritems(), key=operator.itemgetter(1))[0]
 
 
-# def parse_trainig_data(dic):
-#     tree = ET.parse('test-data.data')
-#     root = tree.getroot()
-#     contexts = root.findall("./lexelt/instance/")
+def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary):
+    tree = ET.parse('test-data.data')
+    root = tree.getroot()
+    lexelts = root.findall("./lexelt")
+    results = {}
+    for lexelt in lexelts:
+        instanceString = lexelt.attrib['item']
+        for instance in lexelt:
+            context = instance[0]
+            results[instance.attrib['id']] = word_sense_disambiguation(
+                featureProbabilityDictionary, priorProbabilityDictionary, context, instanceString)
+    f = open('test_result.txt', 'w')
+    for result, sense_id in results.iteritems():
+        f.write(result + "," + sense_id)
+    f.close()
