@@ -59,7 +59,7 @@ def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDict
 
 
 def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary):
-    tree = ET.parse('processed_training.xml')
+    tree = ET.parse('processed_test2.xml')
     root = tree.getroot()
     lexelts = root.findall("./lexelt")
     results = {}

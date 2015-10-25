@@ -145,6 +145,6 @@ def naive_bayes_training(root):
 
 
 if __name__ == "__main__":
-    tree = ET.parse('processed_training.xml')
+    tree = ET.parse('processed_test2.xml')
     root = tree.getroot()
     naive_bayes_training(root)
