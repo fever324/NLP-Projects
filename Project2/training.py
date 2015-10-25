@@ -20,12 +20,12 @@ def naive_bayes_training(root):
                 if answer.tag == 'context':
                     continue
 
+                senseid = answer.attrib['senseid']
+                if senseid == 'U':
+                    continue
+
                 item = lexelt.attrib['item'].strip().split('.')[0]
                 if item in prior_prob:
-                    senseid = answer.attrib['senseid']
-                    if senseid == 'U':
-                        continue
-
                     lexelt_dict = prior_prob[item]
                     if senseid in lexelt_dict:
                         lexelt_dict[senseid] += 1
@@ -33,16 +33,20 @@ def naive_bayes_training(root):
                         lexelt_dict[senseid] = 1
 
                 else:
-                    prior_prob[item] = {answer.attrib['senseid']: 1}
+                    prior_prob[item] = {senseid: 1}
+
+    senseid_amount = {}
 
     for lexelt in prior_prob:
         count = 0
         for senseid in prior_prob[lexelt]:
             count += prior_prob[lexelt][senseid]
         for senseid in prior_prob[lexelt]:
+            senseid_amount[senseid] = prior_prob[lexelt][senseid]
             prior_prob[lexelt][senseid] /= float(count)
 
     print "Prior prob done"
+    #  print prior_prob
 
     #  Compute P(feature_i|senseid_i)
     feature_candidates_dict = {}
@@ -70,21 +74,20 @@ def naive_bayes_training(root):
 
                 for feature in feature_candidates:
                     if feature in feature_candidates_dict[lexelt_item]:
-                        for senseid_count in feature_candidates_dict[lexelt_item][feature]:
-                            if senseid == senseid_count[0]:
-                                senseid_count[1] += 1
-                                break
-                            feature_candidates_dict[lexelt_item][feature].append([senseid, 1])
+                        if senseid in feature_candidates_dict[lexelt_item][feature]:
+                            feature_candidates_dict[lexelt_item][feature][senseid] += 1
+                        else:
+                            feature_candidates_dict[lexelt_item][feature][senseid] = 1
                     else:
-                        feature_candidates_dict[lexelt_item][feature] = [[senseid, 1]]
+                        feature_candidates_dict[lexelt_item][feature] = {senseid: 1}
         print lexelt_item + ": Feature candidates done"
 
     print "Feature candidates all done"
+    #  print feature_candidates_dict
 
     feature_dict = {}
     for lexelt_item in feature_candidates_dict:
-        if lexelt_item not in feature_dict:
-            feature_dict[lexelt_item] = {}
+        feature_dict[lexelt_item] = {}
 
         for feature in feature_candidates_dict[lexelt_item]:
             feature_dict[lexelt_item][feature] = get_word_definition_overlap_count(feature, lexelt_item)
@@ -97,12 +100,13 @@ def naive_bayes_training(root):
         feature_dict[lexelt_item] = {}
 
         for feature in sorted_features:
-            senseid_count_list = feature_candidates_dict[lexelt_item][feature]
+            senseid_count_dict = feature_candidates_dict[lexelt_item][feature]
 
-            for senseid_count in senseid_count_list:
-                if not senseid_count[0] in feature_dict[lexelt_item]:
-                    feature_dict[lexelt_item][senseid_count[0]] = {}
-                feature_dict[lexelt_item][senseid_count[0]][feature] = senseid_count[1] / prior_prob[lexelt_item][senseid_count[0]]
+            for senseid in senseid_count_dict:
+                if senseid not in feature_dict[lexelt_item]:
+                    feature_dict[lexelt_item][senseid] = {}
+                feature_dict[lexelt_item][senseid][feature] = senseid_count_dict[senseid] / float(senseid_amount[senseid])
+                print feature + ' ' + str(senseid) + ' ' + str(senseid_count_dict[senseid]) + ' ' + str(senseid_amount[senseid])
 
         print lexelt_item + ": prob calc done"
 
