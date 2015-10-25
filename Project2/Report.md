@@ -22,8 +22,96 @@ def construct_unwanted_tags():
         unwantedTags.add(t)
     return unwantedTags
 ```
+From above codes, we see that the unwanted set are turned into a set for better look up performance in the next steps. 
 
-From above codes, we see that the unwanted are turned into a set for better look up performance in the next steps. 
+
+1.2 Once we have the unwanted word tags, we will start parsing the data file and remove words with unwanted tag, and transform the remaining words to their simplest form. The following codes are used to do so. Details of the following code will be discussed in section 2.0.
+
+```python
+
+def remove_unwanted_tags(string, unwantedTags):
+    wordTagPairs = pos_tag(word_tokenize(string))
+    returnTags = []
+    for word in wordTagPairs:
+        if(word[1] not in unwantedTags) and len(word[0]) != 0 
+        	and len(word[0]) != 1 and word[0] != 'n\'t' 
+        	and word[0] != '\'s' and word[0] != '\'ll':
+            returnTags.append(word)
+    return returnTags
+    
+def sentence_to_present_tense_and_single(tags):
+    for i in range(len(tags)):
+        wn_tag = penn_to_wn(tags[i][1])
+        tags[i] = WordNetLemmatizer().lemmatize(tags[i][0], wn_tag)
+    return tags
+```
+
+The input corpus are processed using the above methods and ```processed_trainig.xml``` is generated for training purpose.   
+
+
+2. Training:
+
+
+
+
+<!--Word definition overlap count-->
+2.3 In order to use dictionary to help us pick feature words, a helper method ```get_word_definition_overlap_count``` is written. This method is used to calculate a score that represents how close two words' meanings are. The approach is that firstly we combines are definitions of two words into two large strings, then we calculate number of bigrams and unigrams that overlaps in the two large strings. Secondly, since it is highly possible that duplilcate words will exist in a large string, and number of occurences does not matter in our case, we used a set of words to represent the combined definitions of a word. Lastly, once we have bigram and ungram overlap counts, we used weight index alpha to calculate score. Current weight for unigram is 0.3 and for bigram is 0.7.
+
+```python
+# Unigram weight
+alpha = 0.3
+
+
+def get_word_definition_overlap_count(a, b):
+    unwantedTags = utils.construct_unwanted_tags()
+    defs_a = wn.synsets(a)
+    defs_b = wn.synsets(b)
+
+    # Unigram overlap count
+    unigramOverlapCount = 0
+    bigramOverlapCount = 0
+    aUnigramSet = set()
+    bUnigramSet = set()
+    aBigramSet = set()
+    bBigramSet = set()
+    # Construct a ngram sets
+    for d in defs_a:
+        aUnigramArray = utils.process_string(
+            d.definition().lower(), unwantedTags).split()
+
+        # Unigram
+        add_list_to_set(aUnigramSet, aUnigramArray)
+        # Bigram
+        for i in range(len(aUnigramArray) - 1):
+            aBigramSet.add(aUnigramArray[i] + aUnigramArray[i + 1])
+
+    # Construct b ngram sets
+    for d in defs_b:
+        bUnigramArray = utils.process_string(
+            d.definition().lower(), unwantedTags).split()
+        # Unigram
+        add_list_to_set(bUnigramSet, bUnigramArray)
+
+        # Bigram
+        for i in range(len(bUnigramArray) - 1):
+            bBigramSet.add(bUnigramArray[i] + bUnigramArray[i + 1])
+
+    for word in bUnigramSet:
+        if(word in aUnigramSet):
+            unigramOverlapCount += 1
+    for word in bBigramSet:
+        if word in aBigramSet:
+            bigramOverlapCount += 1
+    return unigramOverlapCount * alpha + bigramOverlapCount * (1 - alpha)
+
+
+def add_list_to_set(setS, l):
+    for a in l:
+        setS.add(a)
+```
+
+
+
 
 
 Then we will look at previous 10 words and following 10 words around the target word. We will process these 20 words based on their definitions in the dictionary and reward those words (increase their weights in the feature vector) which have consecutive overlap with the definition of target word. And of course we also need to process the content of words in dictionary, which means to keep nouns, adjectives, verbs, and adverbs. Finally we would get the feature vectors we want and apply them to the Naive Bayes classifier.
