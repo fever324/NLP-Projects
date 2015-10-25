@@ -5,6 +5,7 @@ import utils
 import training
 import csv
 import json
+import accuracy
 
 """
 featureProbabilityDictionary
@@ -52,7 +53,7 @@ def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDict
 
 
 def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary):
-    tree = ET.parse('processed_training.xml')
+    tree = ET.parse('processed_training2.xml')
     root = tree.getroot()
     lexelts = root.findall("./lexelt")
     results = {}
@@ -71,8 +72,6 @@ def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary)
 
 
 if __name__ == "__main__":
-    tree = ET.parse('processed_training.xml')
-    root = tree.getroot()
 
     with open('prior_prob.json') as f:
         string = "".join(f.readlines())
@@ -84,3 +83,4 @@ if __name__ == "__main__":
     #  prior_prob, feature_dict = training.naive_bayes_training(root)
 
     parse_trainig_data(feature_dict, prior_prob)
+    accuracy.run()

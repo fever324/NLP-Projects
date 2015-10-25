@@ -5,7 +5,7 @@ unwantedTags = utils.construct_unwanted_tags()
 
 
 def main():
-    tree = ET.parse('test-data.data')
+    tree = ET.parse('training-data2.data')
     root = tree.getroot()
     contexts = root.findall("./lexelt/instance/context")
 
@@ -13,7 +13,7 @@ def main():
         context.text = utils.process_string(context.text, unwantedTags)
         for head in context:
             head.tail = utils.process_string(head.tail, unwantedTags)
-    tree.write('processed_test.xml')
+    tree.write('processed_training2.xml')
 
 
 if __name__ == "__main__":
