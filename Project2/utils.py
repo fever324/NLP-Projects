@@ -39,5 +39,11 @@ def sentence_to_present_tense_and_single(string):
     for word in words:
         # Remove single letter word
         if len(word) != 1:
-            returnString += ' ' + en.noun.singular(en.verb.present(word))
+            returnString += ' '
+            if en.is_noun(word):
+                returnString += en.noun.singular(word)
+            elif en.is_verb(word):
+                returnString += en.verb.present(word)
+            else:
+                returnString += word
     return returnString.strip()
