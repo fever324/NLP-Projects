@@ -130,6 +130,12 @@ def naive_bayes_training(root):
 
         print lexelt_item + ": prob calc done"
 
+    for lexelt_item in feature_dict:
+        all_senseid_count = 0
+        for senseid in feature_dict[lexelt_item]:
+            all_senseid_count += senseid_amount[senseid]
+        feature_dict[lexelt_item]['<unk>'] = all_senseid_count
+
     with open('prior_prob.json', 'w') as f:
         f.write(json.dumps(prior_prob))
     with open('feature_dict.json', 'w') as f:
@@ -139,6 +145,6 @@ def naive_bayes_training(root):
 
 
 if __name__ == "__main__":
-    tree = ET.parse('processed_training2.xml')
+    tree = ET.parse('processed_training.xml')
     root = tree.getroot()
     naive_bayes_training(root)

@@ -20,7 +20,7 @@ def remove_unwanted_tags(string, unwantedTags):
     wordTagPairs = pos_tag(word_tokenize(string))
     returnTags = []
     for word in wordTagPairs:
-        if(word[1] not in unwantedTags) and len(word[0]) != 0 and len(word[0]) != 1 and word[0] != 'n\'t' and word[0] != '\'s':
+        if(word[1] not in unwantedTags) and len(word[0]) != 0 and len(word[0]) != 1 and word[0] != 'n\'t' and word[0] != '\'s' and word[0] != '\'ll':
             returnTags.append(word)
     #  print returnTags
     return returnTags
