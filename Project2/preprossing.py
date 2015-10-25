@@ -12,11 +12,8 @@ def main():
     for context in contexts:
         context.text = utils.process_string(context.text, unwantedTags)
         for head in context:
-            head.tail = process_string(head.tail, unwantedTags)
+            head.tail = utils.process_string(head.tail, unwantedTags)
     tree.write('processed_training.xml')
-
-
-
 
 
 if __name__ == "__main__":
