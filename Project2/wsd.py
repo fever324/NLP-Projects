@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 import math
 import operator
 import utils
+import training
 
 """
 featureProbabilityDictionary
@@ -63,3 +64,10 @@ def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary)
     for result, sense_id in results.iteritems():
         f.write(result + "," + sense_id)
     f.close()
+
+
+if __name__ == "__main__":
+    tree = ET.parse('processed_training.xml')
+    root = tree.getroot()
+    prior_prob, feature_dict = training.naive_bayes_training(root)
+    parse_trainig_data(feature_dict, prior_prob)

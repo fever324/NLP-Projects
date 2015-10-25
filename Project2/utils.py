@@ -20,16 +20,16 @@ def remove_unwanted_tags(string, unwantedTags):
     wordTagPairs = pos_tag(word_tokenize(string))
     returnTags = []
     for word in wordTagPairs:
-        if(word[1] not in unwantedTags) and len(word[0]) != 1 and word[0] != 'n\'t' and word[0] != '\'s':
-            returnTags += word
+        if(word[1] not in unwantedTags) and len(word[0]) != 0 and len(word[0]) != 1 and word[0] != 'n\'t' and word[0] != '\'s':
+            returnTags.append(word)
+    #  print returnTags
     return returnTags
 
 
 def construct_unwanted_tags():
 
     unwantedTags = set()
-    l = ['$', '\'\'', '(', ')', ',', '--', '.', ':', 'CC', 'CD', 'DT', 'EX', 'IN', 'PDT', 'LS',
-         'MD', 'POS', 'PRP', 'PRP$', 'RP', 'SYM', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB', '``']
+    l = ['$', '\'\'', '(', ')', ',', '--', '.', ':', 'CC', 'CD', 'DT', 'EX', 'IN', 'PDT', 'LS', 'MD', 'POS', 'PRP', 'PRP$', 'RP', 'SYM', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB', '``']
 
     for t in l:
         unwantedTags.add(t)
@@ -46,8 +46,8 @@ def sentence_to_present_tense_and_single(tags):
 def turn_tags_to_string(tags):
     toReturn = ''
     for tag in tags:
-        toReturn += tag[0]
-    return toReturn
+        toReturn = toReturn + ' ' + tag
+    return toReturn.strip()
 
 # def sentence_to_present_tense_and_single(string):
 #     words = string.split()

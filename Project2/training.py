@@ -24,7 +24,8 @@ def naive_bayes_training(root):
                 if senseid == 'U':
                     continue
 
-                item = lexelt.attrib['item'].strip().split('.')[0]
+                #  item = lexelt.attrib['item'].strip().split('.')[0]
+                item = lexelt.attrib['item']
                 if item in prior_prob:
                     lexelt_dict = prior_prob[item]
                     if senseid in lexelt_dict:
@@ -51,7 +52,8 @@ def naive_bayes_training(root):
     #  Compute P(feature_i|senseid_i)
     feature_candidates_dict = {}
     for lexelt in root:
-        lexelt_item = lexelt.attrib['item'].strip().split('.')[0]
+        lexelt_item = lexelt.attrib['item']
+        #  lexelt_item = lexelt.attrib['item'].strip().split('.')[0]
         if lexelt_item not in feature_candidates_dict:
             feature_candidates_dict[lexelt_item] = {}
 
@@ -90,12 +92,12 @@ def naive_bayes_training(root):
         feature_dict[lexelt_item] = {}
 
         for feature in feature_candidates_dict[lexelt_item]:
-            feature_dict[lexelt_item][feature] = get_word_definition_overlap_count(feature, lexelt_item)
+            feature_dict[lexelt_item][feature] = get_word_definition_overlap_count(feature, lexelt_item.split('.')[0])
             print feature + ' overlap ' + lexelt_item + ': ' + str(feature_dict[lexelt_item][feature])
 
         sorted_features = sorted(feature_dict[lexelt_item], key=feature_dict[lexelt_item].get, reverse=True)[:feature_num]
 
-        print lexelt_item + ' selected features: ' + str(sorted_features)
+        print lexelt_item.split('.')[0] + ' selected features: ' + str(sorted_features)
 
         feature_dict[lexelt_item] = {}
 
@@ -110,7 +112,7 @@ def naive_bayes_training(root):
 
         print lexelt_item + ": prob calc done"
 
-    return feature_dict
+    return (prior_prob, feature_dict)
 
 
 if __name__ == "__main__":
