@@ -134,7 +134,7 @@ def naive_bayes_training(root):
         all_senseid_count = 0
         for senseid in feature_dict[lexelt_item]:
             all_senseid_count += senseid_amount[senseid]
-        feature_dict[lexelt_item]['<unk>'] = all_senseid_count
+        feature_dict[lexelt_item]['<unk>'] = 1 / float(all_senseid_count)
 
     with open('prior_prob.json', 'w') as f:
         f.write(json.dumps(prior_prob))

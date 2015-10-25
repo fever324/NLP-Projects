@@ -41,19 +41,25 @@ def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDict
     surround_words = surround_words[:20]
 
     for sense_id, featureProbility in sense_ids.iteritems():
+        if sense_id == '<unk>':
+            continue
+
         sense_id_scores[sense_id] = priorProbabilityDictionary[
             instanceString][sense_id]
 
         for word in surround_words:
             if word in featureProbility:
                 sense_id_scores[sense_id] *= featureProbility[word]
+            else:
+                sense_id_scores[sense_id] *= sense_ids['<unk>']
+
 
     # return the sense_id with max score
     return max(sense_id_scores.iteritems(), key=operator.itemgetter(1))[0]
 
 
 def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary):
-    tree = ET.parse('processed_training2.xml')
+    tree = ET.parse('processed_training.xml')
     root = tree.getroot()
     lexelts = root.findall("./lexelt")
     results = {}

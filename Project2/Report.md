@@ -24,5 +24,9 @@ def construct_unwanted_tags():
 From above codes, we see that 26 types of words are eliminated after preprocessing.  
 Also we noticed that there are so many nonsense words suffix and prefix left after pos-tagging that we had to delete them specifically, like "n't", "'ll", "'s", "'re", etc.
 
+
+### 2. Data Structures
+
+The primary data structure we used is Dictionary in Python. 
      
 Then we will look at previous 10 words and following 10 words around the target word. We will process these 20 words based on their definitions in the dictionary and reward those words (increase their weights in the feature vector) which have consecutive overlap with the definition of target word. And of course we also need to process the content of words in dictionary, which means to keep nouns, adjectives, verbs, and adverbs. Finally we would get the feature vectors we want and apply them to the Naive Bayes classifier.
