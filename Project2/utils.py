@@ -40,10 +40,15 @@ def sentence_to_present_tense_and_single(string):
         # Remove single letter word
         if len(word) != 1:
             returnString += ' '
-            if en.is_noun(word):
-                returnString += en.noun.singular(word)
-            elif en.is_verb(word):
-                returnString += en.verb.present(word)
-            else:
+            try:
+                if en.is_noun(word):
+                    returnString += en.noun.singular(word)
+                elif en.is_verb(word):
+                    returnString += en.verb.present(word)
+                else:
+                    returnString += word
+            except:
+                print 'cannot process word ' + word
                 returnString += word
+
     return returnString.strip()
