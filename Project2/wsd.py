@@ -3,6 +3,8 @@ import math
 import operator
 import utils
 import training
+import csv
+import json
 
 """
 featureProbabilityDictionary
@@ -30,12 +32,12 @@ def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDict
     sense_ids = featureProbabilityDictionary[instanceString]
     sense_id_scores = {}
     surround_words = context.text.strip().split()[-10:]
-    headNumber = 0
-    while(len(surround_words) < 20):
-        numberToGrab = 20 - len(surround_words)
-        surround_words += context[headNumber].tail.strip().split()[
-            :numberToGrab]
-        headNumber += 1
+
+    for head in context:
+        surround_words += head.tail.strip().split()
+        if len(surround_words) > 20:
+            break
+    surround_words = surround_words[:20]
 
     for sense_id, featureProbility in sense_ids.iteritems():
         sense_id_scores[sense_id] = priorProbabilityDictionary[
@@ -50,24 +52,35 @@ def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDict
 
 
 def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary):
-    tree = ET.parse('test-data.data')
+    tree = ET.parse('processed_training.xml')
     root = tree.getroot()
     lexelts = root.findall("./lexelt")
     results = {}
     for lexelt in lexelts:
         instanceString = lexelt.attrib['item']
         for instance in lexelt:
-            context = instance[0]
+            #  context = instance[0]
+            context = instance[len(instance)-1]
             results[instance.attrib['id']] = word_sense_disambiguation(
                 featureProbabilityDictionary, priorProbabilityDictionary, context, instanceString)
-    f = open('test_result.txt', 'w')
-    for result, sense_id in results.iteritems():
-        f.write(result + "," + sense_id)
-    f.close()
+
+    with open('test_result.csv', 'w') as csvfile:
+        f = csv.writer(csvfile)
+        for result, sense_id in results.items():
+            f.writerow([result, sense_id])
 
 
 if __name__ == "__main__":
     tree = ET.parse('processed_training.xml')
     root = tree.getroot()
-    prior_prob, feature_dict = training.naive_bayes_training(root)
+
+    with open('prior_prob.json') as f:
+        string = "".join(f.readlines())
+        prior_prob = json.loads(string)
+    with open('feature_dict.json') as f:
+        string = "".join(f.readlines())
+        feature_dict = json.loads(string)
+
+    #  prior_prob, feature_dict = training.naive_bayes_training(root)
+
     parse_trainig_data(feature_dict, prior_prob)

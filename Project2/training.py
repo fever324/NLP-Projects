@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from generateWordMap import get_word_definition_overlap_count
+import json
 #  import pdb
 #  pdb.set_trace()
 
@@ -9,12 +10,19 @@ select_range = 6
 # The number of features for a lexelt
 feature_num = 20
 
+# The training number for each lexelt
+training_amount = 20
+
 
 def naive_bayes_training(root):
     #  Compute P(senseid_i)
     prior_prob = {}
 
+    trained = 0
     for lexelt in root:
+        if trained == training_amount:
+            break
+
         for instance in lexelt:
             for answer in instance:
                 if answer.tag == 'context':
@@ -50,14 +58,21 @@ def naive_bayes_training(root):
     #  print prior_prob
 
     #  Compute P(feature_i|senseid_i)
+    trained = 0
     feature_candidates_dict = {}
     for lexelt in root:
+        if trained == training_amount:
+            break
+
         lexelt_item = lexelt.attrib['item']
         #  lexelt_item = lexelt.attrib['item'].strip().split('.')[0]
         if lexelt_item not in feature_candidates_dict:
             feature_candidates_dict[lexelt_item] = {}
 
         for instance in lexelt:
+            if instance[0].attrib['senseid'] == 'U':
+                continue
+
             length = len(instance) - 1
             context = instance[length].text.strip().split()
             feature_candidates = context[-(select_range/2):]
@@ -112,10 +127,15 @@ def naive_bayes_training(root):
 
         print lexelt_item + ": prob calc done"
 
+    with open('prior_prob.json', 'w') as f:
+        f.write(json.dumps(prior_prob))
+    with open('feature_dict.json', 'w') as f:
+        f.write(json.dumps(feature_dict))
+
     return (prior_prob, feature_dict)
 
 
 if __name__ == "__main__":
     tree = ET.parse('processed_training.xml')
     root = tree.getroot()
-    print naive_bayes_training(root)
+    naive_bayes_training(root)
