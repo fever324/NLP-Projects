@@ -44,7 +44,7 @@ def naive_bayes_training(root):
     #  Compute P(feature_i|senseid_i)
     feature_candidates_dict = {}
     for lexelt in root:
-        lexelt_item = lexelt.attrib['item'].split.strip().split()
+        lexelt_item = lexelt.attrib['item'].strip().split()[0]
         if lexelt_item not in feature_candidates_dict:
             feature_candidates_dict[lexelt_item] = {}
 
@@ -62,19 +62,23 @@ def naive_bayes_training(root):
 
             for answer in instance[:length]:
                 senseid = answer.attrib['senseid']
+                if senseid == 'U':
+                    continue
+
                 for feature in feature_candidates:
                     if feature in feature_candidates_dict[lexelt_item]:
                         for senseid_count in feature_candidates_dict[lexelt_item][feature]:
                             if senseid == senseid_count[0]:
                                 senseid_count[1] += 1
                                 break
-                            feature_candidates_dict[lexelt_item][feature].add((senseid, 1))
+                            feature_candidates_dict[lexelt_item][feature].append([senseid, 1])
                     else:
-                        feature_candidates_dict[lexelt_item][feature] = [(senseid, 1)]
+                        feature_candidates_dict[lexelt_item][feature] = [[senseid, 1]]
         print lexelt_item + ": Feature candidates done"
 
     print "Feature candidates all done"
-
+    print feature_candidates_dict
+'''
     feature_dict = {}
     for lexelt_item in feature_candidates_dict:
         if lexelt_item not in feature_dict:
@@ -97,9 +101,9 @@ def naive_bayes_training(root):
         print lexelt_item + ": prob calc done"
 
     return feature_dict
-
+'''
 
 if __name__ == "__main__":
-    tree = ET.parse('training-data.data')
+    tree = ET.parse('processed_training.xml')
     root = tree.getroot()
     print naive_bayes_training(root)

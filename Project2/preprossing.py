@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import utils
 
 if __name__ == "__main__":
-    tree = ET.parse('test-data.data')
+    tree = ET.parse('training-data.data')
     root = tree.getroot()
     contexts = root.findall("./lexelt/instance/context")
 
@@ -13,4 +13,4 @@ if __name__ == "__main__":
         context.text = utils.remove_unwanted_tags(preString, unwantedTags)
         for head in context:
             head.tail = utils.remove_unwanted_tags(head.tail, unwantedTags)
-    tree.write('processed_test.xml')
+    tree.write('processed_training.xml')

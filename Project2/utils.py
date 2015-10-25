@@ -14,8 +14,7 @@ def remove_unwanted_tags(string, unwantedTags):
 def construct_unwanted_tags():
 
     unwantedTags = set()
-    l = ['$', '\'\'', '(', ')', ',', '--', '.', ':', 'CC', 'DT', 'EX', 'IN', 'PDT',
-         'POS', 'PRP', 'PRP$', 'RP', 'SYM', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB', '``']
+    l = ['$', '\'\'', '(', ')', ',', '--', '.', ':', 'CC', 'CD', 'DT', 'EX', 'IN', 'PDT', 'LS', 'MD', 'POS', 'PRP', 'PRP$', 'RP', 'SYM', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB', '``']
 
     for t in l:
         unwantedTags.add(t)
