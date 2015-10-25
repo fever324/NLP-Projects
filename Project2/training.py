@@ -78,6 +78,9 @@ def naive_bayes_training(root):
             feature_candidates = context[-(select_range/2):]
 
             for head in instance[length]:
+                if head.tail == None:
+                    continue
+
                 feature_candidates += head.tail.strip().split()
                 if len(feature_candidates) > select_range:
                     break
@@ -136,6 +139,6 @@ def naive_bayes_training(root):
 
 
 if __name__ == "__main__":
-    tree = ET.parse('processed_training.xml')
+    tree = ET.parse('processed_training2.xml')
     root = tree.getroot()
     naive_bayes_training(root)

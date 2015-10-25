@@ -8,5 +8,18 @@ For our WSD system, we implement our idea propsed in the proposal， which is to
 
 We divide our system into several sub-functions:
 
-1. Data cleaning and data preprocessing:
+1. Data cleaning and data preprocessing:  
+We first eliminate punctuations and meaningless words in the corpus such as prepositions, conjunctions, articles, pronouns, interjections, quantifiers, auxillaries, etc., using part-of-speech tagging. The tagging type is showned below.  
 
+```python
+def construct_unwanted_tags():
+    unwantedTags = set()
+    l = ['$', '\'\'', '(', ')', ',', '--', '.', ':', 'CC', 'CD', 'DT', 'EX', 'IN', 'PDT', 'LS', 'MD', 'POS', 'PRP', 'PRP$', 'RP', 'SYM', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB', '``']
+
+    for t in l:
+        unwantedTags.add(t)
+    return unwantedTags
+```
+
+From above codes, we see that   
+Then we will look at previous 10 words and following 10 words around the target word. We will process these 20 words based on their definitions in the dictionary and reward those words (increase their weights in the feature vector) which have consecutive overlap with the definition of target word. And of course we also need to process the content of words in dictionary, which means to keep nouns, adjectives, verbs, and adverbs. Finally we would get the feature vectors we want and apply them to the Naive Bayes classifier.
