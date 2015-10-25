@@ -32,9 +32,13 @@ priorProbabilityDictionary
 def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDictionary, context, instanceString):
     sense_ids = featureProbabilityDictionary[instanceString]
     sense_id_scores = {}
-    surround_words = context.text.strip().split()[-10:]
+    surround_words = []
+    if(context.text is not None):
+        surround_words = context.text.strip().split()[-10:]
 
     for head in context:
+        if(head.tail is None):
+            continue
         surround_words += head.tail.strip().split()
         if len(surround_words) > 20:
             break
@@ -89,4 +93,4 @@ if __name__ == "__main__":
     #  prior_prob, feature_dict = training.naive_bayes_training(root)
 
     parse_trainig_data(feature_dict, prior_prob)
-    accuracy.run()
+    #accuracy.run()

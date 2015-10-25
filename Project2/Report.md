@@ -116,8 +116,41 @@ def add_list_to_set(setS, l):
 
 Then we will look at previous 10 words and following 10 words around the target word. We will process these 20 words based on their definitions in the dictionary and reward those words (increase their weights in the feature vector) which have consecutive overlap with the definition of target word. And of course we also need to process the content of words in dictionary, which means to keep nouns, adjectives, verbs, and adverbs. Finally we would get the feature vectors we want and apply them to the Naive Bayes classifier.
 
+```python
+def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDictionary, context, instanceString):
+    sense_ids = featureProbabilityDictionary[instanceString]
+    sense_id_scores = {}
+    surround_words = []
+    if(context.text is not None):
+        surround_words = context.text.strip().split()[-10:]
+
+    for head in context:
+        if(head.tail is None):
+            continue
+        surround_words += head.tail.strip().split()
+        if len(surround_words) > 20:
+            break
+    surround_words = surround_words[:20]
+
+    for sense_id, featureProbility in sense_ids.iteritems():
+        if sense_id == '<unk>':
+            continue
+
+        sense_id_scores[sense_id] = priorProbabilityDictionary[
+            instanceString][sense_id]
+
+        for word in surround_words:
+            if word in featureProbility:
+                sense_id_scores[sense_id] *= featureProbility[word]
+            else:
+                sense_id_scores[sense_id] *= sense_ids['<unk>']
 
 
+    # return the sense_id with max score
+    return max(sense_id_scores.iteritems(), key=operator.itemgetter(1))[0]
+```
+
+In the above code, we calculated the score of each sense id in every given context, and use the sense id with highest score as the meaning of the word in given context. The scoring method is simply multiplying the probabiliy of occurence of the words that surrounds the target word. The probabily of feature words and unknow words are read from ```feature_dict.json``` and ```prior_prob.json``` which are calculated from the naive-bayes-trainng section.
 
 
 
