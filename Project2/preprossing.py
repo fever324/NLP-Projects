@@ -1,16 +1,23 @@
 import xml.etree.ElementTree as ET
 import utils
 
-if __name__ == "__main__":
+unwantedTags = utils.construct_unwanted_tags()
+
+
+def main():
     tree = ET.parse('training-data.data')
     root = tree.getroot()
     contexts = root.findall("./lexelt/instance/context")
 
-    unwantedTags = utils.construct_unwanted_tags()
-
     for context in contexts:
-        preString = context.text
-        context.text = utils.remove_unwanted_tags(preString, unwantedTags)
+        context.text = utils.process_string(context.text, unwantedTags)
         for head in context:
-            head.tail = utils.remove_unwanted_tags(head.tail, unwantedTags)
+            head.tail = process_string(head.tail, unwantedTags)
     tree.write('processed_training.xml')
+
+
+
+
+
+if __name__ == "__main__":
+    main()

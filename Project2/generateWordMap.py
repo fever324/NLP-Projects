@@ -19,7 +19,7 @@ def get_word_definition_overlap_count(a, b):
     bBigramSet = set()
     # Construct a ngram sets
     for d in defs_a:
-        aUnigramArray = utils.remove_unwanted_tags(
+        aUnigramArray = utils.process_string(
             d.definition().lower(), unwantedTags).split()
 
         # Unigram
@@ -30,7 +30,7 @@ def get_word_definition_overlap_count(a, b):
 
     # Construct b ngram sets
     for d in defs_b:
-        bUnigramArray = utils.remove_unwanted_tags(
+        bUnigramArray = utils.process_string(
             d.definition().lower(), unwantedTags).split()
         # Unigram
         add_list_to_set(bUnigramSet, bUnigramArray)
