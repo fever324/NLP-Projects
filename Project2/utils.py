@@ -38,6 +38,8 @@ def sentence_to_present_tense_and_single(string):
     returnString = ''
     for word in words:
         # Remove single letter word
+        if word == 'n\'t':
+            continue
         if len(word) != 1:
             try:
                 if en.is_noun(word):
