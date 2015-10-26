@@ -8,7 +8,7 @@ import json
 select_range = 6
 
 # The number of features for a lexelt
-feature_num = 20
+feature_num = 5
 
 # The training number for each lexelt
 training_amount = 20
@@ -145,6 +145,6 @@ def naive_bayes_training(root):
 
 
 if __name__ == "__main__":
-    tree = ET.parse('processed_training2.xml')
+    tree = ET.parse('processed_training.xml')
     root = tree.getroot()
     naive_bayes_training(root)

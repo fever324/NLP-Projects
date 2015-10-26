@@ -63,7 +63,7 @@ def word_sense_disambiguation(featureProbabilityDictionary, priorProbabilityDict
 
 
 def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary):
-    tree = ET.parse('processed_test2.xml')
+    tree = ET.parse('processed_training.xml')
     root = tree.getroot()
     lexelts = root.findall("./lexelt")
     results = {}
@@ -75,7 +75,7 @@ def parse_trainig_data(featureProbabilityDictionary, priorProbabilityDictionary)
             results[instance.attrib['id']] = word_sense_disambiguation(
                 featureProbabilityDictionary, priorProbabilityDictionary, context, instanceString)
 
-    with open('test_result.csv', 'w') as csvfile:
+    with open('validation_result.csv', 'w') as csvfile:
         f = csv.writer(csvfile)
         for result, sense_id in results.items():
             f.writerow([result, sense_id])

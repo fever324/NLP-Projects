@@ -2,7 +2,7 @@ from nltk.corpus import wordnet as wn
 import utils
 
 # Unigram weight
-alpha = 0.3
+alpha = 0.8
 
 
 def get_word_definition_overlap_count(a, b):

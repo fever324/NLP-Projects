@@ -452,5 +452,12 @@ defs = wn.synsets('apple')
 
 ### 3. Results
 
+We conduct several experiments basing on our classification model. By change our model parameters, we would figure out how these parameters affect the classification result. First, let's see how $alpha$ affects our model.
+
+
+
+### 4. Discussion  
+
+We implement the Word Sense Disambiguation basing on the Naive Bayes Classifier, and using words that have most common sense as the feature. The motivation of our method is that we think 
 
 

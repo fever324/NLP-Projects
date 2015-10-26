@@ -7,7 +7,7 @@ def run():
     root = tree.getroot()
 
     prediction = []
-    with open('test_result.csv', 'r') as csvfile:
+    with open('validation_result.csv', 'r') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         for row in reader:
             prediction.append(row[1])
@@ -24,3 +24,5 @@ def run():
             correct += 1
 
     print float(correct) / len(prediction)
+
+run()
