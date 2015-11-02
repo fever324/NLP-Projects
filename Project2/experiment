@@ -1,0 +1,3 @@
+python training.py
+python wsd.py
+python accuracy.py

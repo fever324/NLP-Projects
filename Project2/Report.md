@@ -191,10 +191,12 @@ def naive_bayes_training
         feature_dict[lexelt_item] = {}
 
         for feature in feature_candidates_dict[lexelt_item]:
-            feature_dict[lexelt_item][feature] = get_word_definition_overlap_count(feature, lexelt_item.split('.')[0])
+            feature_dict[lexelt_item][feature] = get_word_definition_overlap_count(feature, 
+            									lexelt_item.split('.')[0])
             print feature + ' overlap ' + lexelt_item + ': ' + str(feature_dict[lexelt_item][feature])
 
-        sorted_features = sorted(feature_dict[lexelt_item], key=feature_dict[lexelt_item].get, reverse=True)[:feature_num]
+        sorted_features = sorted(feature_dict[lexelt_item], 
+        					key=feature_dict[lexelt_item].get, reverse=True)[:feature_num]
 
         print lexelt_item.split('.')[0] + ' selected features: ' + str(sorted_features)
 
@@ -206,8 +208,10 @@ def naive_bayes_training
             for senseid in senseid_count_dict:
                 if senseid not in feature_dict[lexelt_item]:
                     feature_dict[lexelt_item][senseid] = {}
-                feature_dict[lexelt_item][senseid][feature] = senseid_count_dict[senseid] / float(senseid_amount[senseid])
-                print feature + ' ' + str(senseid) + ' ' + str(senseid_count_dict[senseid]) + ' ' + str(senseid_amount[senseid])
+                feature_dict[lexelt_item][senseid][feature] = senseid_count_dict[senseid] 
+                							/ float(senseid_amount[senseid])
+                print feature + ' ' + str(senseid) + ' ' + str(senseid_count_dict[senseid]) 
+                		+ ' ' + str(senseid_amount[senseid])
 
         print lexelt_item + ": prob calc done"
 
@@ -452,12 +456,132 @@ defs = wn.synsets('apple')
 
 ### 3. Results
 
-We conduct several experiments basing on our classification model. By change our model parameters, we would figure out how these parameters affect the classification result. First, let's see how $alpha$ affects our model.
+We conducted several experiments basing on our classification model. By changing our model parameters, we figured out how these parameters affect the classification result. All test results are coming from our validation set, and the validation set is splited from our training set. We have 3 variables that can be varied.
 
+First, let's see how $\alpha$ affects our model. Alpha is used when word definition closeness are calculated. $\alpha$ is the weight that is put on unigram, and $1-\alpha$ is the weight for bigram. 
 
+|Alpha | Accuracy |
+|:--------------:|:-----------------:|
+|0.2	|0.763157895|0.3	|0.763157895|0.4	|0.75877193|0.5	|0.75877193|0.7	|0.75877193|0.8	|0.75877193
+
+As we can see from the table above, varying $\alpha$ does affect our test accuracy a little bit. But more significant accuracy change could be achieved by varying number of features words that we select.  
+
+|Feature Number | Accuracy |
+|:--------------:|:-----------------:|
+|1	| 0.776315789|5	| 0.771929825|20	| 0.75877193|60	| 0.745614035|120| 0.640350877
+
+Surprisingly, the less feature number we have, the higher validation accuracy we got. We are thinking that the model is overfitting when feature number reaches a certain level. However, we can not explain why accuracy decreased when feature number was increased from 1 to 5.
+
+We have also varied feature selection range for training process. This number represents how many words that surrounds the targeting word that were processed.
+
+|Feature Range | Accuracy |
+|:--------------:|:-----------------:||2	 | 0.789473684|6  |	0.75877193|8  |	0.76754386|10 |  0.763157895
+
+The table above shows that the larger feature range we had, the lower validation accuary we were able to achieve. We think this is because the further away the feature words are from target word, the less correlated the two words are. That's why having a smaller feature range can help us elimininate feature candidates and improve accuracy. 
 
 ### 4. Discussion  
 
-We implement the Word Sense Disambiguation basing on the Naive Bayes Classifier, and using words that have most common sense as the feature. The motivation of our method is that we think 
+We implement the Word Sense Disambiguation basing on the Naive Bayes Classifier, and using words that have most common sense as the feature. The motivation of our method is that we think words that share some sense in common may be a good feature to disambiguate word senses, because it indicates that these words have a high correlation with the target word, which means that these words would have a high occurence probability if the target word occurs. For example, from our experiment, word "atmosphere" could have several sense\_ids, 
+
+```
+"atmosphere.n": {
+    "atmosphere%1:26:01::": {
+      "break": 0.0093457943925234,
+      "set": 0.0093457943925234,
+      "bar": 0.0093457943925234,
+      "form": 0.0093457943925234,
+      "show": 0.0093457943925234,
+      "work": 0.0093457943925234,
+      "high": 0.0093457943925234,
+      "good": 0.0093457943925234,
+      "right": 0.018691588785047,
+      "encounter": 0.0093457943925234,
+      "last": 0.0093457943925234,
+      "comfort": 0.0093457943925234,
+      "contempt": 0.0093457943925234
+    },
+    "atmosphere%1:26:00::": {
+      "level": 0.33333333333333
+    },
+    "atmosphere%1:07:00::": {
+      "head": 0.018518518518519,
+      "set": 0.037037037037037,
+      "show": 0.018518518518519,
+      "high": 0.055555555555556,
+      "right": 0.037037037037037,
+      "encounter": 0.018518518518519,
+      "setting": 0.018518518518519,
+      "contempt": 0.018518518518519
+    },
+    "atmosphere%1:15:00::": {
+      "high": 0.052631578947368,
+      "planet": 0.052631578947368,
+      "good": 0.052631578947368,
+      "close": 0.052631578947368,
+      "level": 0.052631578947368
+    },
+    "atmosphere%1:17:00::": {
+      "planet": 0.14285714285714,
+      "tropical": 0.14285714285714,
+      "line": 0.14285714285714
+    },
+    "<unk>": 0.0052631578947368
+  }
+```
+
+This dictionary shows the lexelt_item "atmosphere" and its corresponding sense\_ids and its high correlated features. We can see that "level" is a very good feature to distinguish senseid "atmosphere%1:26:00::" from others because it has high probability when "atmosphere%1:26:00::" occurs and has low probability when other senses occur. And words like "bar" or "close" might also be good features because they are the unique features for "atmosphere%1:26:01::" and "atmosphere%1:15:00::".
+
+Another example:
+
+```
+"play.v": {
+    "3165213": {
+      "do": 0.125,
+      "deal": 0.125,
+      "give": 0.125
+    },
+    "3165211": {
+      "move": 0.083333333333333,
+      "lead": 0.083333333333333
+    },
+    "3165210": {
+      "do": 0.13157894736842,
+      "play": 0.026315789473684,
+      "run": 0.026315789473684,
+      "lead": 0.078947368421053,
+      "make": 0.026315789473684,
+      "work": 0.026315789473684,
+      "start": 0.026315789473684,
+      "come": 0.026315789473684
+    },
+    "3165217": {
+      "do": 0.052631578947368,
+      "play": 0.052631578947368,
+      "get": 0.052631578947368,
+      "caught": 0.052631578947368,
+      "give": 0.10526315789474,
+      "draw": 0.052631578947368,
+      "turn": 0.052631578947368,
+      "take": 0.052631578947368,
+      "go": 0.10526315789474,
+      "come": 0.052631578947368,
+      "ground": 0.052631578947368
+    },
+    "3165214": {
+      "start": 0.16666666666667
+    },
+    "3165220": {
+      "go": 0.33333333333333,
+      "play": 0.33333333333333,
+      "playing": 0.33333333333333
+    },
+    "3165218": {
+      "do": 0.14285714285714
+    },
+    "<unk>": 0.0098039215686275
+  },
+```
+
+As you know, "play" is a typical polysemant. From the table above, we can easily see that sense\_id "3165214", "3165218", can be easily distinguished by their unique word. And for other senses, we could use naive bayes formula to compute their probabilities.
 
 

@@ -5,10 +5,10 @@ import json
 #  pdb.set_trace()
 
 # Feature range around target word
-select_range = 6
+select_range = 10
 
 # The number of features for a lexelt
-feature_num = 5
+feature_num = 0
 
 # The training number for each lexelt
 training_amount = 20
