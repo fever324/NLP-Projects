@@ -12,20 +12,25 @@ def main():
 
 
 '''
-NER_dict
+NER_dict - This dictionary is for speed up looking process
+Key - the first word in the Sequence,
+Value - a set of string that has key as the first word
+
 {
-    'TORONTO': set([('TORONTO',)]),
-    'SEATTLE': set([('SEATTLE',)]),
-    'SAN': set([('SAN', 'FRANCISCO')]),
-    'CHICAGO': set([('CHICAGO',)]),
-    'New': set([('New', 'York')]),
+    'TORONTO': set(['TORONTO']),
+    'SEATTLE': set(['SEATTLE']),
+    'SAN': set(['SAN FRANCISCO']),
+    'CHICAGO': set(['CHICAGO')]),
+    'New': set(['New York']),
     'Boston': set([('Boston',)]),
-    'National': set([('National', 'League')])
+    'National': set([('National League')])
 }
 '''
 
 '''
-Tag_dict
+Tag_dict - A dictionary that matches string to its name entities
+Key - String
+Value - A set of tags that the string's name entities may belong to
 {
     'TORONTO': set(['ORG']),
     'SEATTLE': set(['ORG']),
@@ -40,6 +45,7 @@ Tag_dict
 '''
 
 
+# Generate NER_dict and Tag_dict
 def training():
     with open('train2.txt', 'r') as f:
         line_no = 0
@@ -74,6 +80,7 @@ def training():
                             cur_B = ''
                             cur_Tag = ''
 
+                    # Edge case for last word
                     if i == len(labels) - 1:
                         if cur_B != '':
                             if cur_B not in NER_dict:
@@ -83,6 +90,7 @@ def training():
                             cur_B = ''
                             cur_Tag = ''
 
+            # Make line number goes between [0, 1, 2]
             line_no = (line_no + 1) % 3
 
 
@@ -100,14 +108,16 @@ def testing():
                     word = word_tokens[i]
                     if word in NER_dict:
                         stringSet = NER_dict[word]
-                        # Find longest tuple
+                        # Find longest sequence length
                         maxLength = 0
                         for s in stringSet:
                             n = len(s.split())
                             if maxLength < n:
                                 maxLength = n
 
-                        for j in range(len(word_tokens), 0, -1):
+                        # Look for longest sequence first
+                        # This goes from maxLength to 1
+                        for j in range(maxLength, -1, -1):
                             strings = word_tokens[i:i + 1 + j]
                             # Handles not enough remaining words
                             if(len(strings) != j + 1):
@@ -121,12 +131,17 @@ def testing():
                                         Solution[tag] = []
                                     Solution[tag].append(
                                         indexes[i] + '-' + indexes[i + j])
+
+            # Make line number goes between [0, 1, 2]
             line_no = (line_no + 1) % 3
 
 
+# Add named entity to NER_dict and Tag_dict
 def addToTwoDicts(target, cur_B, cur_Tag):
     NER_dict[cur_B].add(target)
-    addToTagDict(target, cur_Tag)
+    if target not in Tag_dict:
+        Tag_dict[target] = set()
+    Tag_dict[target].add(cur_Tag)
 
 
 def printSolution():
@@ -137,17 +152,6 @@ def printSolution():
             string += ' '.join(answers) + '\n'
             f.write(string)
 
-
-def addToTagDict(string, tag):
-    if string not in Tag_dict:
-        Tag_dict[string] = set()
-    Tag_dict[string].add(tag)
-
-    #  with open ('test.txt', 'r') as f:
-    #  line_no = 0
-
-    #  for lin in f:
-    #  if line_no == 0:
 
 if __name__ == "__main__":
     main()
