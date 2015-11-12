@@ -10,7 +10,7 @@ emissionCount = {}
 emissionP = {}
 
 
-def updateDict(dic, key):
+def updateCountDict(dic, key):
     if key not in dic:
         dic[key] = 1
     else:
@@ -32,16 +32,15 @@ def hmm():
                 labelsLen = len(labels)-1
 
                 for index in range(labelsLen):
-                    updateDict(uniCount, labels[index])
-                    updateDict(biCount, labels[index] + ' ' + labels[index+1])
-                updateDict(uniCount, '<end>')
+                    updateCountDict(uniCount, labels[index])
+                    updateCountDict(biCount, labels[index] + ' ' + labels[index+1])
+                updateCountDict(uniCount, '<end>')
 
-                labels.pop(labelsLen)
                 labels.pop()
-                labelsLen -= 2
+                labels.pop(0)
 
-                for index in range(labelsLen):
-                    updateDict(emissionCount, labels[index] + ' ' + wordTokens[index])
+                for index in range(len(labels)):
+                    updateCountDict(emissionCount, labels[index] + ' ' + wordTokens[index])
 
             line_no = (line_no + 1) % 3
 
