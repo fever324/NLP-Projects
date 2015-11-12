@@ -17,35 +17,36 @@ def updateDict(dic, key):
         dic[key] += 1
 
 
-with open('train.txt', 'r') as f:
-    line_no = 0
+def hmm():
+    with open('train.txt', 'r') as f:
+        line_no = 0
 
-    for line in f:
-        if line_no == 0:
-            wordTokens = line.strip().split()
+        for line in f:
+            if line_no == 0:
+                wordTokens = line.strip().split()
 
-        if line_no == 2:
-            labels = line.strip().split()
-            labelsLen = len(labels)
+            if line_no == 2:
+                labels = line.strip().split()
+                labels.insert(0, '<s>')
+                labels.append('<end>')
+                labelsLen = len(labels)-1
 
-            if labelsLen == 1:
-                updateDict(uniCount, labels[0])
-            elif labelsLen != 0:
-                for index in range(labelsLen - 1):
+                for index in range(labelsLen):
                     updateDict(uniCount, labels[index])
                     updateDict(biCount, labels[index] + ' ' + labels[index+1])
-                updateDict(uniCount, labels[-1])
+                updateDict(uniCount, '<end>')
 
-            for index in range(labelsLen):
-                updateDict(emissionCount, labels[index] + ' ' + wordTokens[index])
+                labels.pop(labelsLen)
+                labels.pop()
+                labelsLen -= 2
 
-        line_no = (line_no + 1) % 3
+                for index in range(labelsLen):
+                    updateDict(emissionCount, labels[index] + ' ' + wordTokens[index])
 
-for key in biCount:
-    biTransP[key] = biCount[key] / float(uniCount[key.split()[0]])
+            line_no = (line_no + 1) % 3
 
-for key in emissionCount:
-    emissionP[key] = emissionCount[key] / float(uniCount[key.split()[0]])
+    for key in biCount:
+        biTransP[key] = biCount[key] / float(uniCount[key.split()[0]])
 
-print biTransP
-print emissionP
+    for key in emissionCount:
+        emissionP[key] = emissionCount[key] / float(uniCount[key.split()[0]])
