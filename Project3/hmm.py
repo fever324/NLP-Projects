@@ -36,10 +36,15 @@ def hmm():
                 labels.insert(0, '<s>')
                 labels.append('<end>')
 
-                for index in range(len(labels)-1):
+                for index in range(len(labels) - 1):
                     updateCountDict(uniCount, labels[index])
-                    updateCountDict(biCount, labels[index] + ' ' + labels[index+1])
+                    updateCountDict(
+                        biCount, labels[index] + ' ' + labels[index + 1])
                 updateCountDict(uniCount, '<end>')
+
+                for index in range(len(labels) - 2):
+                    updateCountDict(triCount, labels[
+                                    index] + ' ' + labels[index + 1] + ' ' + labels[index + 2])
 
                 labels.pop()
                 labels.pop(0)
@@ -47,14 +52,21 @@ def hmm():
                 for index in range(len(labels)):
                     word = wordTokens[index]
                     if word not in wordCategory:
-                        updateCountDict(emissionCount, labels[index] + ' ' + word)
+                        updateCountDict(emissionCount, labels[
+                                        index] + ' ' + word)
                     else:
-                        updateCountDict(emissionCount, labels[index] + ' ' + wordCategory[word])
+                        updateCountDict(emissionCount, labels[
+                                        index] + ' ' + wordCategory[word])
 
             line_no = (line_no + 1) % 3
 
     for key in biCount:
         biTransP[key] = biCount[key] / float(uniCount[key.split()[0]])
+
+    for key in triCount:
+        a = key.split()
+        firstTwoWord = a[0] + ' ' + a[1]
+        triTransP[key] = triCount[key] / float(biCount[firstTwoWord])
 
     for key in emissionCount:
         emissionP[key] = emissionCount[key] / float(uniCount[key.split()[0]])
