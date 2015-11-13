@@ -8,7 +8,7 @@ Solution = {}
 def main():
     training()
     testing()
-    printSolution()
+    printSolution(Solution)
 
 
 '''
@@ -144,10 +144,10 @@ def addToTwoDicts(target, cur_B, cur_Tag):
     Tag_dict[target].add(cur_Tag)
 
 
-def printSolution():
+def printSolution(s):
     with open('solution.txt', 'w') as f:
         f.write('Type,Prediction\n')
-        for tag, answers in Solution.iteritems():
+        for tag, answers in s.iteritems():
             string = tag + ','
             string += ' '.join(answers) + '\n'
             f.write(string)
