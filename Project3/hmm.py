@@ -90,7 +90,7 @@ def smoothing():
             line_no = (line_no + 1) % 3
 
     for word in wordCount:
-        if wordCount[word] <= 5:
+        if wordCount[word] <= 1:
             wordCategory[word] = categorize(word)
 
 
@@ -100,7 +100,3 @@ def categorize(word):
             return k
 
     return 'rex_other'
-
-smoothing()
-hmm()
-print wordCount['-']
