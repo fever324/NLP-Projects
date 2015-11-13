@@ -42,6 +42,7 @@ def hmm():
                         biCount, labels[index] + ' ' + labels[index + 1])
                 updateCountDict(uniCount, '<end>')
 
+                labels.insert(0, '<s>')
                 for index in range(len(labels) - 2):
                     updateCountDict(triCount, labels[
                                     index] + ' ' + labels[index + 1] + ' ' + labels[index + 2])
