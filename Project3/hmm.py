@@ -8,6 +8,7 @@ triCount = {}
 uniTransP = {}
 biTransP = {}
 triTransP = {}
+biForTriP = {}
 
 emissionCount = {}
 emissionP = {}
@@ -25,7 +26,7 @@ def updateCountDict(dic, key):
 
 
 def hmm():
-    with open('train.txt', 'r') as f:
+    with open('train2.txt', 'r') as f:
         line_no = 0
 
         for line in f:
@@ -43,8 +44,9 @@ def hmm():
                 updateCountDict(uniCount, '<end>')
 
                 labels.insert(0, '<s>')
-                for index in range(len(labels) - 2):
+                for index in range(len(labels) - 1):
                     updateCountDict(biCountForTri, labels[index] + ' ' + labels[index + 1])
+                for index in range(len(labels) - 2):
                     updateCountDict(triCount, labels[index] + ' ' + labels[index + 1] + ' ' + labels[index + 2])
 
                 labels.pop()
@@ -60,8 +62,17 @@ def hmm():
 
             line_no = (line_no + 1) % 3
 
+    #  N = sum(uniCount.values())
+    N = sum(wordCount.values())
+
+    for key in uniCount:
+        uniTransP[key] = uniCount[key] / float(N)
+
     for key in biCount:
         biTransP[key] = biCount[key] / float(uniCount[key.split()[0]])
+
+    for key in biCountForTri:
+        biForTriP[key] = biCountForTri[key] / float(uniCount[key.split()[0]])
 
     for key in triCount:
         a = key.split()
@@ -112,3 +123,49 @@ def categorize(word):
             return k
 
     return 'rex_other'
+
+
+def deleted_interpolation():
+    lambda1 = 0
+    lambda2 = 0
+    lambda3 = 0
+
+    for trigram in triCount:
+        labels = trigram.split()
+        assert len(labels) == 3
+
+        temp = biCountForTri[labels[0]+' '+labels[1]] - 1
+        case3 = 0
+        if temp != 0:
+            case3 = (triCount[trigram]-1) / float(temp)
+
+        temp = uniCount[labels[1]] - 1
+        case2 = 0
+        if temp != 0:
+            case2 = (biCountForTri[labels[1]+' '+labels[2]] - 1) / float(temp)
+
+        temp = sum(wordCount.values())-1
+        #  temp = sum(uniCount.values())-1
+        case1 = 0
+        if temp != 0:
+            case1 = (uniCount[labels[2]]-1) / float(temp)
+
+        maximum = max([case1, case2, case3])
+
+        if maximum == case3:
+            lambda3 += triCount[trigram]
+        elif maximum == case2:
+            lambda2 += triCount[trigram]
+        else:
+            lambda1 += triCount[trigram]
+
+    total = lambda1 + lambda2 + lambda3
+    lambda1 /= float(total)
+    lambda2 /= float(total)
+    lambda3 /= float(total)
+
+    for k, v in triTransP.iteritems():
+        labels = k.split()
+        triTransP[k] = lambda3 * triTransP[k] + lambda2 * biForTriP[labels[1]+' '+labels[2]] + lambda1 * uniTransP[labels[2]]
+
+    return lambda1, lambda2, lambda3

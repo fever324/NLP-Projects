@@ -1,3 +1,9 @@
+CRICKET	-	POLLOCK	CONCLUDES	WARWICKSHIRE	CAREER	WITH	FLOURISH	.
+NNP	:	NNP	NNP	NNP	NNP	IN	NNP	.
+0 1 2 3 4 5 6 7 8
+LONDON	1996-08-25
+NNP	CD
+9 10
 South	African	fast	bowler	Shaun	Pollock	concluded	his	Warwickshire	career	with	a	flourish	on	Sunday	by	taking	the	final	three	wickets	during	the	county	's	Sunday	league	victory	over	Worcestershire	.
 JJ	JJ	JJ	NN	NNP	NNP	VBD	PRP$	NNP	NN	IN	DT	VB	IN	NNP	IN	VBG	DT	JJ	CD	NNS	IN	DT	NN	POS	NNP	NN	NN	IN	NNP	.
 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41

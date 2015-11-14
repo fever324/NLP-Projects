@@ -3,6 +3,25 @@ import baseline
 import os
 
 Solution = {}
+lambda1 = 0
+lambda2 = 0
+lambda3 = 0
+
+
+def interpolation(transEntry):
+    labels = transEntry.split()
+    prob = 0
+
+    if transEntry in hmm.triTransP:
+        prob += lambda3 * hmm.triTransP[transEntry]
+    if labels[1] + ' ' + labels[2] in hmm.biForTriP:
+        prob += lambda2 * hmm.biForTriP[labels[1] + ' ' + labels[2]]
+    if labels[2] in hmm.uniTransP:
+        prob += lambda1 * hmm.uniTransP[labels[2]]
+
+    assert prob != 0
+
+    return prob
 
 
 def firstInitializationHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens):
@@ -18,19 +37,15 @@ def firstInitializationHelper(smooth, stateNum, states, viterbi, backpointer, wo
                 viterbi[u][s][0] = 0
         else:
             transEntry = '<s> <s> ' + states[s]
-            if transEntry not in hmm.triTransP:
-                for u in range(stateNum):
-                    viterbi[u][s][0] = 0
-            else:
-                prob = hmm.triTransP[transEntry] * hmm.emissionP[emissionEntry]
-                for u in range(stateNum):
-                    viterbi[u][s][0] = prob
-                smoothLater = False
+            prob = interpolation(transEntry)
+            prob *= hmm.emissionP[emissionEntry]
+
+            for u in range(stateNum):
+                viterbi[u][s][0] = prob
+            smoothLater = False
 
         for u in range(stateNum):
             backpointer[u][s][0] = -1
-            #  print viterbi[u][s][0],
-        #  print ''
 
     return smoothLater
 
@@ -49,21 +64,13 @@ def secondInitializationHelper(smooth, stateNum, states, viterbi, backpointer, w
         else:
             for u in range(stateNum):
                 transEntry = '<s> ' + states[u] + ' ' + states[s]
-                if transEntry not in hmm.triTransP:
-                    viterbi[u][s][1] = 0
-                else:
-                    viterbi[u][s][1] = viterbi[0][u][0] * hmm.triTransP[transEntry] * hmm.emissionP[emissionEntry]
-                    smoothLater = False
+                prob = interpolation(transEntry)
+
+                viterbi[u][s][1] = viterbi[0][u][0] * prob * hmm.emissionP[emissionEntry]
+                smoothLater = False
 
         for u in range(stateNum):
             backpointer[u][s][1] = -1
-
-    #  print '-------------------'
-    #  for u in range(stateNum):
-        #  for s in range(stateNum):
-            #  print viterbi[u][s][1],
-        #  print ''
-    #  print '-------------------'
 
     return smoothLater
 
@@ -86,30 +93,17 @@ def recursionHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens, 
 
                 for w in range(stateNum):
                     transEntry = states[w] + ' ' + states[u] + ' ' + states[s]
-                    if transEntry in hmm.triTransP:
-                        prob = viterbi[w][u][t-1] * hmm.triTransP[transEntry]
-                        if prob > maxProb:
-                            maxProb = prob
-                            maxProbIndex = w
+                    prob = interpolation(transEntry)
+
+                    prob *= viterbi[w][u][t-1]
+                    if prob > maxProb:
+                        maxProb = prob
+                        maxProbIndex = w
 
                 viterbi[u][s][t] = maxProb * hmm.emissionP[emissionEntry]
                 backpointer[u][s][t] = maxProbIndex
 
             smoothLater = False
-
-    #  print '-------------------' + str(t)
-    #  for u in range(stateNum):
-        #  for s in range(stateNum):
-            #  print viterbi[u][s][t],
-        #  print ''
-    #  print '-------------------' + str(t)
-
-    #  print '-------------------' + str(t)
-    #  for u in range(stateNum):
-        #  for s in range(stateNum):
-            #  print backpointer[u][s][t],
-        #  print ''
-    #  print '-------------------' + str(t)
 
     return smoothLater
 
@@ -148,9 +142,9 @@ def decoding(wordTokens):
     for s in range(stateNum):
         for u in range(stateNum):
             transEntry = states[u] + ' ' + states[s] + ' <end>'
-            TProb = 0
-            if transEntry in hmm.triTransP:
-                TProb = viterbi[u][s][wordLen - 1] * hmm.triTransP[transEntry]
+            TProb = interpolation(transEntry)
+
+            TProb *= viterbi[u][s][wordLen - 1]
             if TProb > maxTProb:
                 maxTProb = TProb
                 maxTProbIndexS = s
@@ -159,13 +153,12 @@ def decoding(wordTokens):
     result = []
     result.append(states[maxTProbIndexU])
     result.append(states[maxTProbIndexS])
-    print 'here'
-    print maxTProbIndexU, maxTProbIndexS
-    #  print states
 
     # Backtrace step
     for k in range(wordLen-3, -1, -1):
         yk = backpointer[maxTProbIndexU][maxTProbIndexS][k+2]
+        maxTProbIndexS = maxTProbIndexU
+        maxTProbIndexU = yk
         result.insert(0, states[yk])
 
     with open('result.txt', 'a') as f:
@@ -173,7 +166,6 @@ def decoding(wordTokens):
             f.write(r + ' ')
         f.write('\n')
 
-    print result
     return result
 
 
@@ -187,9 +179,8 @@ def main():
     if os.path.isfile('result.txt'):
         os.remove('result.txt')
 
-    with open('test.txt', 'r') as f:
+    with open('test2.txt', 'r') as f:
         line_no = 0
-        count = 0
 
         for line in f:
             if line_no == 0:
@@ -233,16 +224,13 @@ def main():
                             end = -1
                             tag = ''
 
-                #  count += 1
-                #  if count == 1:
-                    #  break
-
             line_no = (line_no + 1) % 3
 
 
 if __name__ == "__main__":
     hmm.smoothing()
     hmm.hmm()
+    lambda1, lambda2, lambda3 = hmm.deleted_interpolation()
     main()
 
     baseline.printSolution(Solution)
