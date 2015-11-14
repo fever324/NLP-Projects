@@ -359,8 +359,12 @@ def interpolation(transEntry):
     assert prob != 0
 
     return prob
+```
+
+This part implements the interpolation method of trigram language model. Lambda1, lambda2, and lambda3 was calculated during the training process. The calculation method is according to the delete interpolation method from textbook.
 
 
+```
 def firstInitializationHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens):
     smoothLater = True
     # First time -- * * s
@@ -385,8 +389,12 @@ def firstInitializationHelper(smooth, stateNum, states, viterbi, backpointer, wo
             backpointer[u][s][0] = -1
 
     return smoothLater
+```
+
+The firstInitializationHelper method is used to initialize the viterbi matrix given the first word -- \<s> \<s> 'A'.
 
 
+```
 def secondInitializationHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens):
     smoothLater = True
     # Second Time  -- * u s
@@ -411,8 +419,11 @@ def secondInitializationHelper(smooth, stateNum, states, viterbi, backpointer, w
             backpointer[u][s][1] = -1
 
     return smoothLater
+```
 
+The secondInitializationHelper method is used to initialize the viterbi matrix given the first word -- \<s> 'A' 'B'.
 
+```
 def recursionHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens, t):
     smoothLater = True
     # v u s
@@ -444,8 +455,11 @@ def recursionHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens, 
             smoothLater = False
 
     return smoothLater
+```
 
+The recursioinHelper method is used to initialize the viterbi matrix given the first word -- 'A' 'B' 'C'.
 
+```
 def decoding(wordTokens):
     wordLen = len(wordTokens)
     states = []
@@ -529,5 +543,7 @@ if __name__ == "__main__":
     baseline.printSolution(Solution)
 
 ```
+
+The decoding method was implemented according to viterbi method. We thought carefully about how and to smooth our language model.
 
 ##Individual Member ContributionHongfei Li wrote the baseline algorithm, and wrote the report. Shibo Zang was the main brain of the team. Hongfei and Shibo both contributed to writing the viterbi algorithm and hmm models. Shibo also worked on the extension and figured out how to convert our algorithms to work with trigram.
