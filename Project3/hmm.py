@@ -2,6 +2,7 @@ import re
 
 uniCount = {}
 biCount = {}
+biCountForTri = {}
 triCount = {}
 
 uniTransP = {}
@@ -24,7 +25,7 @@ def updateCountDict(dic, key):
 
 
 def hmm():
-    with open('train2.txt', 'r') as f:
+    with open('train.txt', 'r') as f:
         line_no = 0
 
         for line in f:
@@ -38,26 +39,24 @@ def hmm():
 
                 for index in range(len(labels) - 1):
                     updateCountDict(uniCount, labels[index])
-                    updateCountDict(
-                        biCount, labels[index] + ' ' + labels[index + 1])
+                    updateCountDict(biCount, labels[index] + ' ' + labels[index + 1])
                 updateCountDict(uniCount, '<end>')
 
                 labels.insert(0, '<s>')
                 for index in range(len(labels) - 2):
-                    updateCountDict(triCount, labels[
-                                    index] + ' ' + labels[index + 1] + ' ' + labels[index + 2])
+                    updateCountDict(biCountForTri, labels[index] + ' ' + labels[index + 1])
+                    updateCountDict(triCount, labels[index] + ' ' + labels[index + 1] + ' ' + labels[index + 2])
 
                 labels.pop()
+                labels.pop(0)
                 labels.pop(0)
 
                 for index in range(len(labels)):
                     word = wordTokens[index]
                     if word not in wordCategory:
-                        updateCountDict(emissionCount, labels[
-                                        index] + ' ' + word)
+                        updateCountDict(emissionCount, labels[index] + ' ' + word)
                     else:
-                        updateCountDict(emissionCount, labels[
-                                        index] + ' ' + wordCategory[word])
+                        updateCountDict(emissionCount, labels[index] + ' ' + wordCategory[word])
 
             line_no = (line_no + 1) % 3
 
@@ -67,7 +66,7 @@ def hmm():
     for key in triCount:
         a = key.split()
         firstTwoWord = a[0] + ' ' + a[1]
-        triTransP[key] = triCount[key] / float(biCount[firstTwoWord])
+        triTransP[key] = triCount[key] / float(biCountForTri[firstTwoWord])
 
     for key in emissionCount:
         emissionP[key] = emissionCount[key] / float(uniCount[key.split()[0]])
@@ -88,7 +87,7 @@ def smoothing():
     rexDict['rex_initCap'] = re.compile("^[A-Z][a-z]*$")
     rexDict['rex_lowercase'] = re.compile("^[a-z]+$")
 
-    with open('train.txt', 'r') as f:
+    with open('train2.txt', 'r') as f:
         line_no = 0
 
         for line in f:

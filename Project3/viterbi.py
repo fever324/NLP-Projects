@@ -20,7 +20,7 @@ def initializationHelper(smooth, stateNum, states, viterbi, backpointer, wordTok
             if transEntry not in hmm.biTransP:
                 viterbi[s][0] = 0
             else:
-                viterbi[s][0] = hmm.biTransP['<s> ' + states[s]] * hmm.emissionP[emissionEntry]
+                viterbi[s][0] = hmm.biTransP[transEntry] * hmm.emissionP[emissionEntry]
                 smoothLater = False
         backpointer[s][0] = 0
 
@@ -34,7 +34,6 @@ def recursionHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens, 
         maxProbIndex = 0
         for u in range(stateNum):
             transEntry = states[u] + ' ' + states[s]
-            # Smooth prob here!!!!
             prob = 0
             if transEntry in hmm.biTransP:
                 prob = viterbi[u][t - 1] * hmm.biTransP[transEntry]
@@ -48,7 +47,6 @@ def recursionHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens, 
                 emissionEntry = states[s] + ' ' + hmm.categorize(wordTokens[t])
 
         if emissionEntry not in hmm.emissionP:
-            # Smoothing here!!!!
             viterbi[s][t] = 0
         else:
             viterbi[s][t] = maxProb * hmm.emissionP[emissionEntry]
