@@ -66,7 +66,8 @@ def secondInitializationHelper(smooth, stateNum, states, viterbi, backpointer, w
                 transEntry = '<s> ' + states[u] + ' ' + states[s]
                 prob = interpolation(transEntry)
 
-                viterbi[u][s][1] = viterbi[0][u][0] * prob * hmm.emissionP[emissionEntry]
+                viterbi[u][s][1] = viterbi[0][u][0] * \
+                    prob * hmm.emissionP[emissionEntry]
                 smoothLater = False
 
         for u in range(stateNum):
@@ -95,7 +96,7 @@ def recursionHelper(smooth, stateNum, states, viterbi, backpointer, wordTokens, 
                     transEntry = states[w] + ' ' + states[u] + ' ' + states[s]
                     prob = interpolation(transEntry)
 
-                    prob *= viterbi[w][u][t-1]
+                    prob *= viterbi[w][u][t - 1]
                     if prob > maxProb:
                         maxProb = prob
                         maxProbIndex = w
@@ -117,23 +118,31 @@ def decoding(wordTokens):
     states.remove('<end>')
     stateNum = len(states)
 
-    viterbi = [[[0 for x in range(wordLen)] for x in range(stateNum)] for x in range(stateNum)]
-    backpointer = [[[0 for x in range(wordLen)] for x in range(stateNum)] for x in range(stateNum)]
+    viterbi = [[[0 for x in range(wordLen)] for x in range(
+        stateNum)] for x in range(stateNum)]
+    backpointer = [[[0 for x in range(wordLen)] for x in range(
+        stateNum)] for x in range(stateNum)]
 
     # Initialization step
-    smooth = firstInitializationHelper(False, stateNum, states, viterbi, backpointer, wordTokens)
+    smooth = firstInitializationHelper(
+        False, stateNum, states, viterbi, backpointer, wordTokens)
     if smooth:
-        firstInitializationHelper(True, stateNum, states, viterbi, backpointer, wordTokens)
+        firstInitializationHelper(
+            True, stateNum, states, viterbi, backpointer, wordTokens)
 
-    smooth = secondInitializationHelper(False, stateNum, states, viterbi, backpointer, wordTokens)
+    smooth = secondInitializationHelper(
+        False, stateNum, states, viterbi, backpointer, wordTokens)
     if smooth:
-        secondInitializationHelper(True, stateNum, states, viterbi, backpointer, wordTokens)
+        secondInitializationHelper(
+            True, stateNum, states, viterbi, backpointer, wordTokens)
 
     # Recursion step
     for t in range(2, wordLen):  # 0 and1 column has been taken care of in initialization
-        smooth = recursionHelper(False, stateNum, states, viterbi, backpointer, wordTokens, t)
+        smooth = recursionHelper(
+            False, stateNum, states, viterbi, backpointer, wordTokens, t)
         if smooth:
-            recursionHelper(True, stateNum, states, viterbi, backpointer, wordTokens, t)
+            recursionHelper(True, stateNum, states, viterbi,
+                            backpointer, wordTokens, t)
 
     # Termination step
     maxTProb = 0
@@ -155,8 +164,8 @@ def decoding(wordTokens):
     result.append(states[maxTProbIndexS])
 
     # Backtrace step
-    for k in range(wordLen-3, -1, -1):
-        yk = backpointer[maxTProbIndexU][maxTProbIndexS][k+2]
+    for k in range(wordLen - 3, -1, -1):
+        yk = backpointer[maxTProbIndexU][maxTProbIndexS][k + 2]
         maxTProbIndexS = maxTProbIndexU
         maxTProbIndexU = yk
         result.insert(0, states[yk])
