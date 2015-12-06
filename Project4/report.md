@@ -5,7 +5,7 @@
 
 ### 1. Project Task
 
-Commedy TV shows are playing a very special part of people's life nowadays. The key to the success of commedy Tv shows is the level of funnies of the themselves. Our task is to use natural language processing technics to evaluate comedy script's funnies level. We may evaluate the funnies level on a scale of 10.   
+Commedy TV shows are playing a very special part of people's life nowadays. The key to the success of commedy Tv shows is the level of funnies of the themselves. Our task is to use natural language processing technics to evaluate comedy transcript's funnies level. We may evaluate the funnies level on a scale of 10.   
 One example from a popular show Big Bang Theory is the following   
 	
 	Raj: I don't like bugs, okay. They freak me out.  
@@ -110,7 +110,7 @@ Thus, the preprocessing part is straightforward. First, we let turkers split one
 Similar to the genre classification, we could implement the humor categorization method using machine learning approaches. For example, we could use Naive Bayes classifier to train a model to distinguish humor type. Since feature selection is critical to Naive Bayes classifier, we would like to different feature set that is currently proposed to implement the classifier we want.
 
 #### 4.3 Model Training
-After proprocessing and categorization part, we will let turkers to rate the humor level of each sentence given a certain text corpus. With these ample training data set, what we need is to train another classifier to rate other text corpus accordingly. I recommend using SVM this time because there seems to be huge amount of features going in our system. 
+After proprocessing and categorization part, we will let turkers to rate the humor level of each sentence given a certain text corpus. With these ample training data set, what we need is to train another classifier to rate other text corpus accordingly. We recommend using SVM this time because there seems to be huge amount of features going in our system. 
 
 
 ### 5. Implementation
@@ -126,6 +126,10 @@ The lower MAE we get, the more likely our system is rating laughping points like
 
 
 ### 7. Future Work
+Eventually we want to have this application used by comedy show editors to evaluate how funny their transcripts are, therefore the next steps of this applicaiton include laugh points automatic detecion. Currently we are relying on mechanic turks to do this work for us, if we are able to automatically detect laugh points and evaluate them, it would greatly reduce the time for humor evaluation.   
+
+Another feature we can have in the future is to combine the scores of each laugh points and evuate the entire episode based on them. This can include what percentage of time that people are laughing in one episode, and how happy they will be at the end of the episode.
+
 ### 8. Individual Member Contribution
 Hongfei Li: Part1, 3, 6, 7
 Shibo Zang: Part2, 4, 5
