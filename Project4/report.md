@@ -31,14 +31,13 @@ Following examples illustrate the type of linguistic elements that underlie humo
 |“Of all the things I lost, I miss my mind the most."|Human centric vocabulary|
 |“Money can't buy your friends, but you do get a better class of enemy"|Negative Orientation|
 |“It was so cold last winter that I saw a lawyer with his hands in his own pockets."|Professional Communtities| 
-|“Wonderful weather we are having."|Irony|  
+|“Wonderful weather we are having." (While the weather is terrible actually.)|Irony|  
 
 
 2.. Predicting Funniess Level  
 We plan to apply machine learning algorithms to this task. Mainly there are three levels that needs to be considered: not funny, neutral, and funny. And with classification algorithm, we could first train the training dataset produced by turkers' annotation using bag of word (BOW) classifier or linguistically (Ling.) informed classifier. The BOW classifier is based on Support Vector Machine using a unigram feature representation. And the linguistically informed classifier is an SVM using the linguistic feature.  
 
 The reason we decide to divide training dataset into multiple categories before applying machine learning algorithm on the dataset directly is that we find there exists different linguistic relationship under each category. For example, 
-
 
 
 ###3. Data and Data Annotation
@@ -64,6 +63,13 @@ For example, for the following transcript which is the first couple of lines in 
 *Sheldon: Thailand has had the fork since the latter half of the nineteenth century. Interestingly they don’t actually put the fork in their mouth, they use it to put the food on a spoon which then goes into their mouth.* **\<lp,3>**
 
 ### 4. Methods and System Development
+#### 4.1 Preprocessing  
+The first thing we should think about in our system is the analysing scope. Treating each individual plot as an analysing part is resonable. In other words, we only consider the relationship between sentences within a plot while evaluating humor levels.  
+
+Thus, the preprocessing part is straightforward. First, we let turkers split one episode into multiple plots basing on the information appears in the show. For example, like The Big Bang Theory, there is a cut scene between two plots. What we need the turkers do is to divide the scripts into several parts basing on the time when cut scene is showing. Second, we will ignore those plots with very few dialogues, e.g. less than three senteces. At last, we will let the turkers make judgement on the scripts about how they think the humor levels is.  
+
+#### 4.2 Model Training
+
 ### 5. Implementation
 ### 6. Evaluation
 ### 7. Anything else
