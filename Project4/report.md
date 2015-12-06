@@ -16,7 +16,7 @@ Clearly the second sentence is the laugh point. Our system will look into the co
 The reason we choose to investigate in this is because we love watching Big Bang Theory and it is the TV series that is making the most money. We want to look into something that can be potentially useful and practical.
 
 In sum, the input is text corpus selected from commedy show The Big
-Bang Theory.And the out put is the funny level of a certain sentence.
+Bang Theory. And the out put is the funnies level of each sentences.
 
 ### 2. General Approach
 
@@ -131,7 +131,5 @@ Eventually we want to have this application used by comedy show editors to evalu
 Another feature we can have in the future is to combine the scores of each laugh points and evuate the entire episode based on them. This can include what percentage of time that people are laughing in one episode, and how happy they will be at the end of the episode.
 
 ### 8. Individual Member Contribution
-Hongfei Li: Part1, 3, 6, 7
-Shibo Zang: Part2, 4, 5
-
-
+Hongfei Li: Part 1, 3, 6, 7  
+Shibo Zang: Part 2, 4, 5
