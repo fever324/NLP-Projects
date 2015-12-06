@@ -31,7 +31,7 @@ Following examples illustrate the type of linguistic elements that underlie humo
 |“Of all the things I lost, I miss my mind the most."|Human centric vocabulary|
 |“Money can't buy your friends, but you do get a better class of enemy"|Negative Orientation|
 |“It was so cold last winter that I saw a lawyer with his hands in his own pockets."|Professional Communtities| 
-|“Wonderful weather we are having."|Irony|  
+|“Wonderful weather we are having." (While the weather is terrible actually.)|Irony|  
 
 
 2.. Predicting Funniess Level  
@@ -94,6 +94,13 @@ For example, for the following transcript which is the first couple of lines in 
 	Sheldon: Thailand has had the fork since the latter half of the nineteenth century. Interestingly they don’t actually put the fork in their mouth, they use it to put the food on a spoon which then goes into their mouth. <lp,3>
 
 ### 4. Methods and System Development
+#### 4.1 Preprocessing  
+The first thing we should think about in our system is the analysing scope. Treating each individual plot as an analysing part is resonable. In other words, we only consider the relationship between sentences within a plot while evaluating humor levels.  
+
+Thus, the preprocessing part is straightforward. First, we let turkers split one episode into multiple plots basing on the information appears in the show. For example, like The Big Bang Theory, there is a cut scene between two plots. What we need the turkers do is to divide the scripts into several parts basing on the time when cut scene is showing. Second, we will ignore those plots with very few dialogues, e.g. less than three senteces. At last, we will let the turkers make judgement on the scripts about how they think the humor levels is.  
+
+#### 4.2 Model Training
+
 ### 5. Implementation
 ### 6. Evaluation
 Since our the goal of project is to evaluate how funny a transcript is, we can evaluate the accuracy based on human inputs we gathered from the amazon mechanic turks. We are going to run a k-fold cross validation with Mean Absolute Error (MAE) to evaluate the accuracy of our system. MAE is a measure of the deviation of the scores given by our system from their true user-specified values. The equation of MAE is the following, where p is the score given by our system, and q is the averaged user ratings.
