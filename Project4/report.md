@@ -3,7 +3,7 @@
 ## Hongfei Li(hl963), Shibo Zang(sz428)
 
 
-### 1. Problem or Task
+### 1. Project Task
 
 Commedy TV shows are playing a very special part of people's life nowadays. The key to the success of commedy Tv shows is the level of funnies of the themselves. Our task is to use natural language processing technics to evaluate comedy script's funnies level. We may evaluate the funnies level on a scale of 10.   
 One example from a popular show Big Bang Theory is the following   
@@ -15,8 +15,10 @@ Clearly the second sentence is the laugh point. Our system will look into the co
 
 The reason we choose to investigate in this is because we love watching Big Bang Theory and it is the TV series that is making the most money. We want to look into something that can be potentially useful and practical.
 
+In sum, the input is text corpus selected from commedy show The Big
+Bang Theory.And the out put is the funny level of a certain sentence.
 
-### 2. General Approach or System Architecture
+### 2. General Approach
 
 The main task of our project is to use NLP technics to evaluate comedy script's funnies level. The general idea we propose to solve this task is in some sense similar to Professor Cristian Danescu-Niculescu-Mizil's work on judging politeness of corpus. We would like to break our task into several subtasks:  
 
@@ -37,7 +39,7 @@ Following examples illustrate the type of linguistic elements that underlie humo
 2.. Predicting Funniess Level  
 We plan to apply machine learning algorithms to this task. Mainly there are three levels that needs to be considered: not funny, neutral, and funny. And with classification algorithm, we could first train the training dataset produced by turkers' annotation using bag of word (BOW) classifier or linguistically (Ling.) informed classifier. The BOW classifier is based on Support Vector Machine using a unigram feature representation. And the linguistically informed classifier is an SVM using the linguistic feature.  
 
-The reason we decide to divide training dataset into multiple categories before applying machine learning algorithm on the dataset directly is that we find there exists different linguistic relationship under each category. For example, 
+The reason we decide to divide training dataset into multiple categories before applying machine learning algorithm on the dataset directly is that we find there exists different linguistic relationship under each category. For example, following examples are scripts taken from some episode of The Big Bang Theory.
 
 
 **Phonological Similarity**  
@@ -70,12 +72,13 @@ The reason we decide to divide training dataset into multiple categories before 
 **Irony**  
 
 	Leonard: Hope you're hungry.  
-	Sheldon: Interesting, a friendly sentiment in this country - a cruel taunt in the Sudan.
+	Sheldon: Interesting, a friendly sentiment in this country - a cruel taunt in the Sudan.  
+	
+
+From the above dialogues, we take pun and irony as an example. We can see that the specific word matters while using pun to show humors, while ironic humor always relates to surrounding context. This informs us that we need to be aware of how different types of humor is created and how should we design classification method to recognize them.  
 
 
-
-
-
+![](http://i.imgur.com/6QtMgiC.png)
 
 
 ###3. Data and Data Annotation
@@ -92,6 +95,10 @@ For example, for the following transcript which is the first couple of lines in 
 	Sheldon: You don’t need chopsticks, this is Thai food.
 	Leonard: Here we go.
 	Sheldon: Thailand has had the fork since the latter half of the nineteenth century. Interestingly they don’t actually put the fork in their mouth, they use it to put the food on a spoon which then goes into their mouth. <lp,3>
+	
+In all the text corpus we need is a dialogue. The purpose is to find lingustic relationship between sentences to design a system to rate the humor level of specific language. 
+
+The project will require a huge amount of dataset, We could get these text corpus from Internet.
 
 ### 4. Methods and System Development
 #### 4.1 Preprocessing  
@@ -99,9 +106,16 @@ The first thing we should think about in our system is the analysing scope. Trea
 
 Thus, the preprocessing part is straightforward. First, we let turkers split one episode into multiple plots basing on the information appears in the show. For example, like The Big Bang Theory, there is a cut scene between two plots. What we need the turkers do is to divide the scripts into several parts basing on the time when cut scene is showing. Second, we will ignore those plots with very few dialogues, e.g. less than three senteces. At last, we will let the turkers make judgement on the scripts about how they think the humor levels is.  
 
-#### 4.2 Model Training
+#### 4.2 Categorization
+Similar to the genre classification, we could implement the humor categorization method using machine learning approaches. For example, we could use Naive Bayes classifier to train a model to distinguish humor type. Since feature selection is critical to Naive Bayes classifier, we would like to different feature set that is currently proposed to implement the classifier we want.
+
+#### 4.3 Model Training
+After proprocessing and categorization part, we will let turkers to rate the humor level of each sentence given a certain text corpus. With these ample training data set, what we need is to train another classifier to rate other text corpus accordingly. I recommend using SVM this time because there seems to be huge amount of features going in our system. 
+
 
 ### 5. Implementation
+We plan to use nltk library to implement word tokenization and POS tagging. However, most part of our system needs to be implemented from scratch since we doesn't find related and outstanding library that can be directly used in our project.
+
 ### 6. Evaluation
 Since our the goal of project is to evaluate how funny a transcript is, we can evaluate the accuracy based on human inputs we gathered from the amazon mechanic turks. We are going to run a k-fold cross validation with Mean Absolute Error (MAE) to evaluate the accuracy of our system. MAE is a measure of the deviation of the scores given by our system from their true user-specified values. The equation of MAE is the following, where p is the score given by our system, and q is the averaged user ratings.
 
@@ -111,7 +125,9 @@ The lower MAE we get, the more likely our system is rating laughping points like
 
 
 
-### 7. Anything else
+### 7. Future Work
 ### 8. Individual Member Contribution
+Hongfei Li: Part1, 3, 6, 7
+Shibo Zang: Part2, 4, 5
 
 
