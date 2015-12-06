@@ -7,9 +7,9 @@
 
 Commedy TV shows are playing a very special part of people's life nowadays. The key to the success of commedy Tv shows is the level of funnies of the themselves. Our task is to use natural language processing technics to evaluate comedy script's funnies level. We may evaluate the funnies level on a scale of 10.   
 One example from a popular show Big Bang Theory is the following   
-
-*Raj: I don't like bugs, okay. They freak me out.  
-Sheldon: Interesting. You're afraid of insects and women. Ladybugs must render you catatonic.*
+	
+	Raj: I don't like bugs, okay. They freak me out.  
+	Sheldon: Interesting. You're afraid of insects and women. Ladybugs must render you catatonic.
 
 Clearly the second sentence is the laugh point. Our system will look into the context of the laugh point and may give the laugh point a funniess level of 8/10.
 
@@ -40,6 +40,43 @@ We plan to apply machine learning algorithms to this task. Mainly there are thre
 The reason we decide to divide training dataset into multiple categories before applying machine learning algorithm on the dataset directly is that we find there exists different linguistic relationship under each category. For example, 
 
 
+**Phonological Similarity**  
+
+	Howard: Watch this, it’s really cool. Call Leonard Hofstadter.
+	Howard’s phone: Did you say, call Helen Boxleitner?
+	Howard: No. Call Leonard Hofstadter.
+	Howard’s phone: Did you say, call Temple Beth Sader.
+	Howard: No.
+	Leonard: Here, let me try. Call McFlono McFloonyloo. Heh-heh.
+	Howard’s phone: Calling Rajesh Koothrappali. (Raj’s phone rings).
+	Raj: Oh, that’s very impressive. And a little racist.`
+  
+
+**Acronym multiple sense**  
+
+	Leonard: Why do they say AA?	
+	Sheldon: Army Ants.
+	Leonard: Isn’t that confusing? AA might mean something else to certain people.
+	Sheldon: Why would a physics bowl team be called anodised aluminium?
+	Leonard: No, I meant…. never mind. Hey, check it out. I got you a Batman cookie jar!
+
+**Pun**    
+
+	Sheldon: Interesting! So it went beyond the mere fact of coitus to a blow by blow account, as it were.  
+	Amy: Pun intended?  
+	Sheldon: I'm sorry, what pun?
+
+
+**Irony**  
+
+	Leonard: Hope you're hungry.  
+	Sheldon: Interesting, a friendly sentiment in this country - a cruel taunt in the Sudan.
+
+
+
+
+
+
 
 ###3. Data and Data Annotation
 
@@ -47,24 +84,27 @@ We will get all transcrips of every epsiode of a commedy TV show such as Big Ban
 
 For example, for the following transcript which is the first couple of lines in season 1 episode 2 of Big Bang Theory. The label are added after the turk's work.
   
-*Leonard: There you go, Pad Thai, no peanuts.*
-
-*Howard: But does it have peanut oil?*
-
-*Leonard: Uh, I’m not sure, everyone keep an eye on Howard in case he starts to swell up.* ***\<lp,8>***
-
-*Sheldon: Since it’s not bee season, you can have my epinephrine.* ***\<lp, 7>***
-
-*Raj: Are there any chopsticks?*
-
-*Sheldon: You don’t need chopsticks, this is Thai food.*
-
-*Leonard: Here we go.*
-
-*Sheldon: Thailand has had the fork since the latter half of the nineteenth century. Interestingly they don’t actually put the fork in their mouth, they use it to put the food on a spoon which then goes into their mouth.* **\<lp,3>**
+	Leonard: There you go, Pad Thai, no peanuts.
+	Howard: But does it have peanut oil?
+	Leonard: Uh, I’m not sure, everyone keep an eye on Howard in case he starts to swell up. <lp,8>
+	Sheldon: Since it’s not bee season, you can have my epinephrine. <lp, 7>
+	Raj: Are there any chopsticks?
+	Sheldon: You don’t need chopsticks, this is Thai food.
+	Leonard: Here we go.
+	Sheldon: Thailand has had the fork since the latter half of the nineteenth century. Interestingly they don’t actually put the fork in their mouth, they use it to put the food on a spoon which then goes into their mouth. <lp,3>
 
 ### 4. Methods and System Development
 ### 5. Implementation
 ### 6. Evaluation
+Since our the goal of project is to evaluate how funny a transcript is, we can evaluate the accuracy based on human inputs we gathered from the amazon mechanic turks. We are going to run a k-fold cross validation with Mean Absolute Error (MAE) to evaluate the accuracy of our system. MAE is a measure of the deviation of the scores given by our system from their true user-specified values. The equation of MAE is the following, where p is the score given by our system, and q is the averaged user ratings.
+
+![](http://www10.org/cdrom/papers/519/img34.gif)
+
+The lower MAE we get, the more likely our system is rating laughping points like a real human being.
+
+
+
 ### 7. Anything else
 ### 8. Individual Member Contribution
+
+
