@@ -9,7 +9,8 @@ Commedy TV shows are playing a very special part of people's life nowadays. The 
 One example from a popular show Big Bang Theory is the following   
 	
 	Raj: I don't like bugs, okay. They freak me out.  
-	Sheldon: Interesting. You're afraid of insects and women. Ladybugs must render you catatonic.
+	Sheldon: Interesting. You're afraid of insects and women. 
+			Ladybugs must render you catatonic.
 
 Clearly the second sentence is the laugh point. Our system will look into the context of the laugh point and may give the laugh point a funniess level of 8/10.
 
@@ -94,7 +95,9 @@ For example, for the following transcript which is the first couple of lines in 
 	Raj: Are there any chopsticks?
 	Sheldon: You don’t need chopsticks, this is Thai food.
 	Leonard: Here we go.
-	Sheldon: Thailand has had the fork since the latter half of the nineteenth century. Interestingly they don’t actually put the fork in their mouth, they use it to put the food on a spoon which then goes into their mouth. <lp,3>
+	Sheldon: Thailand has had the fork since the latter half of the nineteenth century. 
+			Interestingly they don’t actually put the fork in their mouth, 
+			they use it to put the food on a spoon which then goes into their mouth. <lp,3>
 	
 In all the text corpus we need is a dialogue. The purpose is to find lingustic relationship between sentences to design a system to rate the humor level of specific language. 
 
